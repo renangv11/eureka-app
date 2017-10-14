@@ -1,0 +1,60 @@
+Cloud --> De centralizado para distribuído
+|--> finito para infinito
+|--> No cloud, recursos como databases, servers, discos, podem
+	|--> Crescer ou diminuir
+	|--> Aparecer e desaparecer
+Cloud native application
+	|--> Significa que sua aplicação foi feita especialmente para cloud computing.
+
+Spring Cloud --> Não é um framework. É utilizado para descrever algumas ferramentas que facilitam a utilização do cloud em sua aplicação.
+
+Spring cloud netflix --> Netflix OSS (open source) + Spring + Spring boot 
+|--> Não é um projeto, e sim uma coleção de projetos
+
+Service discover --> Expõe o serviço para que outros serviços da sua aplicação possam utilizá-lo.
+	|--> Providencia uma maneira do serviço se registrar, assim caso um client o chame, ele saberá a localização e porta do serviço.
+	|--> Providencia uma maneira do serviço se "desregistrar", fazendo com que um client que o utilize saiba quando ele está indisponível
+	|--> Providencia uma maneira do client encontrar outros serviços
+	|--> Providencia uma maneira de checar a "saúde" de um serviço e remover instâncias "não-saudáveis"
+	|--> Existem várias maneiras de implementar service discover --> Spring cloud consul, Spring cloud  Zookeeper, Spring cloud Netflix
+	|--> É dividido em --> Discovery Server
+	      |	|--> Service
+	      |	|--> Client
+	      |--> Fluxo: (1) Service sobe, chama o Discovery server e faz o seu próprio registro, informando sua localização e porta. 	
+			  (2) Quando um client necessita chamar um service, pergunta sua localização e porta ao Discovery Server, 
+				e envia um identificador.
+			  (3) Através do identificador, o Discovery server envia a localização do service para o client
+			  (4) Client faz o request no local informado pelo Discovery
+			  (5) Service envia resposta
+
+Discovery Server --> Gerencia os registros e "desregistros" dos services, sabendo suas localizações.
+	|--> Uma ou mais intâncias
+
+Service --> O "recebedor" de requests
+   |--> Uma dependência dos outros serviços (clients)
+   |--> Uma ou mais instâncias  
+   |--> Utilizador do discovery client (para se registrar ou desregistrar)
+
+Client --> Responsável por chamar outra aplicação para realizar determinada função 
+   |--> "Emissor de requests"
+   |--> Depende de outro serviço (Service)
+   |--> Utilizador do discovery client, buscando a localização dos serviços
+
+Instâncias --> Um service pode ter mais de uma instância rodando simultanemanete em portas diferentes.
+
+eureka.client.register-with-eureka=false --> apenas para development
+
+Eureka providencia uma dashboard com eureka.dashboard.enabled = true
+   |--> essa dashboard mostra os serviços q estão up ou down
+   |--> para acessar é só colocar a url onde está localizado o eureka server
+
+Áreas de configuração do eureka --> pode-se configurar o eureka em 3 áreas
+   |--> eureka.server.* --> Todas as configurações relacionadas ao discovery server
+   |--> eureka.client.* --> Todas as configurações para controlar como o client interage com o server (timeout, etc)
+   |--> eureka.instance.* --> Tudo o que se registra ou desregistra no eureka server
+
+A cada 30 segundos, o coração dos clients batem a cada 30 segundos (que são enviados ao server). Caso o corações de algum fique sem bater por 90 segundos, o service é removido do registry
+Possui mecânismos e saúde e alta disponibilidade
+
+AWS 
+ 
